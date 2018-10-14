@@ -45,3 +45,11 @@ Then, expose the service:
 After waiting a few minutes to create the containers and set up the IP forwarding rules, run `kubectl get service` to get the public IP of the Mautuic pod.
 
 Go to that IP and you will see the installation screen.
+
+There is a problem with cronjobs so I exec'd into the mautic container and ran
+
+    root@mautic-781503773-4sd3j:/var/www/html/app/spool/default# su www-data -s /bin/bash
+    www-data@mautic-781503773-4sd3j:~/html$ [[ "$(ls -A /var/www/html/app/cache/ip_data 2>/dev/null)" ]] || php /var/www/html/app/console mautic:iplookup:download
+
+I also edited `/etc/cron.d/mautic` and commented out the line starting with `@reboot`. See https://github.com/mautic/docker-mautic/issues/65
+

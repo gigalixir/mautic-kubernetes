@@ -31,3 +31,24 @@ spec:
           ports:
             - containerPort: 80
               name: mautic
+          volumeMounts:
+          - name: mautic-persistent-storage
+            mountPath: /var/www/html
+      volumes:
+      - name: mautic-persistent-storage
+        persistentVolumeClaim:
+          claimName: mautic-pv-claim
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: mautic-pv-claim
+  namespace: mautic
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+
