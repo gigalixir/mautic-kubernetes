@@ -12,22 +12,33 @@ If you are having platform specific issues, feel free to create an issue and I'l
 
 ## Step 2: Set up MySQL
 
+Create namespace
+
+    kubectl create -f namespace.yaml
+
 First, you want to create a [secret](https://kubernetes.io/docs/concepts/configuration/secret/) for the MySQL password:
-`kubectl create secret generic mysql --from-literal=password=YOUR_PASSWORD`
+
+    gpg -d mysql-literal-password.asc
+    kubectl --namespace=mautic create secret generic mysql --from-literal=password=$(cat mysql-literal-password)
 
 Then you'll want to use the `mysql.yaml` file to deploy the manifest:
-`kubectl apply -f mysql.yaml`
+
+    # TODO: persistent storage?! use Cloud SQL instead
+    kubectl apply -f mysql.yaml
 
 After that, use the `mysql-service.yaml` file to expose the service:
-`kubectl apply -f mysql-service.yaml`
+
+    kubectl apply -f mysql-service.yaml
 
 ## Step 3: Set up Mautic
 
 First use the `mautic.yaml` file to deploy the manifest:
-`kubectl apply -f mautic.yaml`
 
-Then, expose the service on Port 80:
-`kubectl apply -f mautic-service.yaml`
+    kubectl apply -f mautic.yml
+
+Then, expose the service:
+
+    kubectl apply -f mautic-service.yml
 
 ## Step 4: View your site!
 

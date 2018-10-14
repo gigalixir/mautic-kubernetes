@@ -1,6 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
+  namespace: mautic
   name: mautic 
   labels:
     app: mautic 
@@ -18,6 +19,8 @@ spec:
         - image: mautic/mautic 
           name: mautic
           env:
+          - name: MAUTIC_RUN_CRON_JOBS
+            value: "true"
           - name: MAUTIC_DB_HOST
             value: mysql:3306
           - name: MAUTIC_DB_PASSWORD
