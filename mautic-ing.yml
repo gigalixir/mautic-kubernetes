@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/proxy-body-size: "0"
+    ingress.kubernetes.io/service-upstream: "true"
+    kubernetes.io/ingress.class: nginx # for nginx-ingress-controller
+    kubernetes.io/tls-acme: "true" # for kube-lego
+  name: mautic-mautic.gigalixir.com
+  namespace: mautic
+spec:
+  rules:
+  - host: mautic.gigalixir.com # point dns at the right place: in my case CNAME tls.gigalixir.com
+    http:
+      paths:
+      - backend:
+          serviceName: mautic
+          servicePort: 80 # must match mautic-service.yml port
+        path: /
+  tls:
+  - hosts:
+    - mautic.gigalixir.com
+    secretName: mautic-mautic.gigalixir.com-tls
+

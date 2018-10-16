@@ -12,6 +12,17 @@ If you are having platform specific issues, feel free to create an issue and I'l
 
 ## Step 2: Set up MySQL
 
+Decrypt secrets
+
+    mkdir secrets
+    gpg -d encrypted_secrets/apache.crt > secrets/apache.crt
+    gpg -d encrypted_secrets/apache.key > secrets/apache.key
+
+Build and deploy docker image
+
+    docker build . -t us.gcr.io/gigalixir-152404/mautic
+    gcloud docker -- push us.gcr.io/gigalixir-152404/mautic
+
 Create namespace
 
     kubectl create -f namespace.yaml
@@ -40,16 +51,18 @@ Then, expose the service:
 
     kubectl apply -f mautic-service.yml
 
+Then, create an ingress:
+
+    kubectl apply -f mautic-ing.yml
+
 ## Step 4: View your site!
 
-After waiting a few minutes to create the containers and set up the IP forwarding rules, run `kubectl get service` to get the public IP of the Mautuic pod.
+After waiting a few minutes to create the containers, visit https://mautic.gigalixir.com/
 
-Go to that IP and you will see the installation screen.
+Enable the API in the web interfacte. Then clear your cache, see https://github.com/mautic/api-library/issues/156
 
-There is a problem with cronjobs so I exec'd into the mautic container and ran
+    rm -rf /var/www/html/app/cache
 
-    root@mautic-781503773-4sd3j:/var/www/html/app/spool/default# su www-data -s /bin/bash
-    www-data@mautic-781503773-4sd3j:~/html$ [[ "$(ls -A /var/www/html/app/cache/ip_data 2>/dev/null)" ]] || php /var/www/html/app/console mautic:iplookup:download
+To use SendGrid's unsubscribe groups, set an smtp custom header for X-SMTPAPI as
 
-I also edited `/etc/cron.d/mautic` and commented out the line starting with `@reboot`. See https://github.com/mautic/docker-mautic/issues/65
-
+    {"asm_group_id": 2987}

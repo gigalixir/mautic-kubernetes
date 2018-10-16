@@ -16,7 +16,7 @@ spec:
         app: mautic 
     spec:
       containers:
-        - image: mautic/mautic 
+        - image: us.gcr.io/gigalixir-152404/mautic
           name: mautic
           env:
           - name: MAUTIC_RUN_CRON_JOBS
@@ -45,6 +45,7 @@ metadata:
   name: mautic-pv-claim
   namespace: mautic
 spec:
+  storageClassName: us-central-1a # see storage_class.yaml
   accessModes:
     - ReadWriteOnce
   resources:
