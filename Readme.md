@@ -65,4 +65,33 @@ Enable the API in the web interfacte. Then clear your cache, see https://github.
 
 To use SendGrid's unsubscribe groups, set an smtp custom header for X-SMTPAPI as
 
-    {"asm_group_id": 2987}
+    {"sub": { "%Unsubscribe%": ["<%asm_group_unsubscribe_url%>"], "%rawUnsubscribe%": ["<%asm_group_unsubscribe_raw_url%>"] }, "asm_group_id": 2987}
+
+In the email, add something like this
+
+    <a href="%rawUnsubscribe%">Unsubscribe</a>
+
+See email queue
+
+    local> kubectl --namespace=mautic exec -it mautic-3060776642-k14r8 /bin/bash
+    root@container> su www-data -s /bin/bash
+    www-data@container> ls /var/www/html/app/spool/default
+    # force email send with: www-data@container> php /var/www/html/app/console mautic:emails:send
+
+How campaigns work for me: 
+
+1. Customers go through a linear progression of stages. No app yet -> No deploy yet -> Not upgraded yet
+1. Each stage is defined by a segment
+1. Each stage has a campaign that does the following
+   1. Waits N days
+   1. Double-checks that they are still in the right stage
+   1. Sends an email
+   1. Repeat M times
+1. When someone progresses a stage, we update the contact field and mautic automatically moves them from one segment to another and moves them from one campaign to another. The old campaign is abandoned and the new campaign starts from the root.
+
+Link tracking doesn't seem to work so we disabled it. Read tracking works fine though. Looks like our problem is here: https://github.com/mautic/mautic/pull/6441
+Indeed, we are running 2.14.0. Perhaps we should upgrade to 2.14.1.
+
+Also, do not set the general site url to https, leave it as http. You get infinite redirects otherwise. You won't notice the problem until you clear your cache though so it's hard to track down.
+
+Strangely, sometimes cron jobs don't run. I just go into /etc/cron.d/mautic and add or remove a line at the end and save. Maybe the timestamp or the whitespace matters?
