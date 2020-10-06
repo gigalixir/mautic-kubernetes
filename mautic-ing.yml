@@ -2,10 +2,11 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-production" # for cert-manager
     ingress.kubernetes.io/proxy-body-size: "0"
     ingress.kubernetes.io/service-upstream: "true"
     kubernetes.io/ingress.class: nginx # for nginx-ingress-controller
-    kubernetes.io/tls-acme: "true" # for kube-lego
+    kubernetes.io/tls-acme: "false" # for kube-lego
   name: mautic-mautic.gigalixir.com
   namespace: mautic
 spec:

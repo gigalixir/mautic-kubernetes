@@ -45,7 +45,7 @@ metadata:
   name: mautic-pv-claim
   namespace: mautic
 spec:
-  storageClassName: us-central-1a # see storage_class.yaml
+  # storageClassName: us-central-1a # see storage_class.yaml
   accessModes:
     - ReadWriteOnce
   resources:

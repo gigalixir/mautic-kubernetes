@@ -29,6 +29,7 @@ Create namespace
 
 First, you want to create a [secret](https://kubernetes.io/docs/concepts/configuration/secret/) for the MySQL password:
 
+    cd secrets
     gpg -d mysql-literal-password.asc
     kubectl --namespace=mautic create secret generic mysql --from-literal=password=$(cat mysql-literal-password)
 
