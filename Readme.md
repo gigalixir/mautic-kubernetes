@@ -30,8 +30,8 @@ Create namespace
 First, you want to create a [secret](https://kubernetes.io/docs/concepts/configuration/secret/) for the MySQL password:
 
     cd secrets
-    gpg -d mysql-literal-password.asc
-    kubectl --namespace=mautic create secret generic mysql --from-literal=password=$(cat mysql-literal-password)
+    gpg -d encrypted_secrets/mysql-literal-password.asc > secrets/mysql-literal-password
+    kubectl --namespace=mautic create secret generic mysql --from-literal=password=$(cat secrets/mysql-literal-password)
 
 Then you'll want to use the `mysql.yaml` file to deploy the manifest:
 
